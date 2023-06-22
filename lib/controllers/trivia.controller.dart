@@ -1,53 +1,71 @@
-import 'dart:io';
-
+import 'package:dk_date/controllers/data.service.dart';
 import 'package:dk_date/models/trivia.category.model.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/services.dart' show rootBundle;
 
 import '../models/trivia.model.dart';
 
 final triviaController = ChangeNotifierProvider((ref) => TriviaController());
 
 class TriviaController with ChangeNotifier {
-  Trivia trivia = Trivia.dummy();
-  List<Trivia> allTrivias = [];
+  // Load all trivias categorically
+  Map<int, List<Trivia>> categoricalTrivias = {};
 
-  Map<int, List<Trivia>> trivias = {};
+  // All selected trivias
+  List<Trivia> trivias = [];
 
-  final categories = TriviaCategory.defaultCategories;
-
+  // Selected categories of trivia
   List<TriviaCategory> selectedCategories = [];
 
-  // TriviaController() {
-  //   readFiles();
-  // }
+  // Current trivia
+  Trivia trivia = Trivia.start();
 
-  Future<List<String>> loadAsset(String fileName) async {
-    String content = await rootBundle.loadString(fileName);
-    return content.split("\n");
+  TriviaController() {
+    init();
   }
 
-  Future<void> readFiles() async {
-    for (var category in categories) {
-      loadAsset(category.fileName).then(
-          (value) => trivias[category.id] =
-              value.map((e) => Trivia(category: category, trivia: e)).toList(),
-          onError: (error, stacktrace) =>
-              trivias[category.id] = [Trivia.dummy(), Trivia.dummy()]);
+  // Start on welcome
+  Future<void> init() async {
+    for (var category in TriviaCategory.defaultCategories) {
+      // Read files
+      final content = DataService.fetchData(category.fileName);
+      content.then(
+        (value) => categoricalTrivias[category.id] =
+            value.map((e) => Trivia(category: category, trivia: e)).toList(),
+      );
     }
     notifyListeners();
   }
 
+  // Do on category select
   void addCategories(List<TriviaCategory> categories) {
     selectedCategories = categories;
 
-    // selectedCategories.map((e) => ,)?
+    for (var category in selectedCategories) {
+      trivias.addAll(categoricalTrivias[category.id]!);
+    }
+
+    // Shuffle trivias
+    trivias.shuffle();
 
     notifyListeners();
   }
 
-  void shuffle() {
-    if (trivias.isNotEmpty) {}
+  // Pick categorical trivias
+  void pickedTrivias() {
+    for (var category in selectedCategories) {
+      trivias.addAll(categoricalTrivias[category.id]!);
+    }
+    notifyListeners();
+  }
+
+  void shuffleNext() {
+    if (trivias.isNotEmpty) {
+      trivia = trivias.removeLast();
+    } else {
+      trivia = Trivia.end();
+    }
+    notifyListeners();
   }
 }

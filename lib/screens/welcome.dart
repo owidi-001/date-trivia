@@ -1,8 +1,10 @@
 import 'package:dk_date/controllers/trivia.controller.dart';
 import 'package:dk_date/screens/category.dart';
+import 'package:dk_date/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'dart:ui' as ui;
 
 class Welcome extends ConsumerStatefulWidget {
   const Welcome({super.key});
@@ -15,7 +17,7 @@ class _WelcomeState extends ConsumerState<Welcome> {
   bool isLoaded = false;
 
   void init() async {
-    await ref.read(triviaController).readFiles().then((value) {
+    await ref.read(triviaController).init().then((value) {
       isLoaded = true;
       setState(() {});
     });
@@ -24,7 +26,7 @@ class _WelcomeState extends ConsumerState<Welcome> {
   @override
   void initState() {
     // TODO: implement initState
-    Future.delayed(Duration(seconds: 2), () => init());
+    Future.delayed(const Duration(seconds: 2), () => init());
     super.initState();
   }
 
@@ -45,14 +47,15 @@ class _WelcomeState extends ConsumerState<Welcome> {
         ),
         child: Stack(
           children: [
+            // Center(
+            //   child: Text(
+            //     "D & K \nTrivia",
+            //     style: Theme.of(context).textTheme.headlineSmall!.copyWith(
+            //         color: AppTheme.white, fontWeight: FontWeight.bold),
+            //   ),
+            // ),
             Center(
-              child: Text(
-                "D & K \nTrivia",
-                style: Theme.of(context)
-                    .textTheme
-                    .headlineSmall!
-                    .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
-              ),
+              child: Image.asset("assets/logo/logo.png")
             ),
             Positioned(
               bottom: 50,
@@ -67,9 +70,9 @@ class _WelcomeState extends ConsumerState<Welcome> {
                               fixedSize: MaterialStateProperty.all(
                                   const Size(200, 40)),
                               backgroundColor:
-                                  MaterialStateProperty.all(Colors.white),
+                                  MaterialStateProperty.all(AppTheme.light),
                               foregroundColor:
-                                  MaterialStateProperty.all(Colors.black),
+                                  MaterialStateProperty.all(AppTheme.dark),
                               overlayColor:
                                   MaterialStateProperty.all(Colors.grey),
                               shape: MaterialStateProperty.all(
@@ -82,7 +85,7 @@ class _WelcomeState extends ConsumerState<Welcome> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => CategorySelect(),
+                                  builder: (context) => const CategorySelect(),
                                 ),
                               );
                             },
@@ -94,7 +97,7 @@ class _WelcomeState extends ConsumerState<Welcome> {
                                 decoration: BoxDecoration(
                                   color: index.isEven
                                       ? Colors.deepPurple
-                                      : Colors.white,
+                                      : AppTheme.white,
                                 ),
                               );
                             },

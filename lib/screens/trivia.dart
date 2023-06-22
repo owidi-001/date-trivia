@@ -1,29 +1,29 @@
+import 'package:dk_date/controllers/data.service.dart';
 import 'package:dk_date/controllers/trivia.controller.dart';
 import 'package:dk_date/models/trivia.category.model.dart';
+import 'package:dk_date/models/trivia.model.dart';
+import 'package:dk_date/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart';
 
-class Trivia extends ConsumerStatefulWidget {
-  const Trivia({super.key, required this.categories});
-
-  final List<TriviaCategory> categories;
+class TriviaScreen extends ConsumerStatefulWidget {
+  const TriviaScreen({super.key});
 
   @override
-  ConsumerState<Trivia> createState() => _TriviaState();
+  ConsumerState<TriviaScreen> createState() => _TriviaScreenState();
 }
 
-class _TriviaState extends ConsumerState<Trivia> {
+class _TriviaScreenState extends ConsumerState<TriviaScreen> {
   @override
   Widget build(BuildContext context) {
-    // var triviaProvider = ref.read(triviaController.notifier).shuffle();
     var triviaProvider = ref.watch(triviaController);
 
     return Container(
       height: double.infinity,
       width: double.infinity,
       decoration: const BoxDecoration(
-        color: Colors.black,
+        color: AppTheme.dark,
         image: DecorationImage(
             image: AssetImage(
               "assets/bg/trivia.png",
@@ -46,7 +46,7 @@ class _TriviaState extends ConsumerState<Trivia> {
                 height: MediaQuery.of(context).size.height / 2,
                 width: MediaQuery.of(context).size.width,
                 decoration: const BoxDecoration(
-                  color: Colors.white,
+                  color: AppTheme.white,
                   image: DecorationImage(
                       image: Svg(
                         "assets/bg/container_bg.svg",
@@ -63,7 +63,7 @@ class _TriviaState extends ConsumerState<Trivia> {
                     style: Theme.of(context)
                         .textTheme
                         .headlineSmall!
-                        .copyWith(color: Colors.black),
+                        .copyWith(color: AppTheme.dark),
                   ),
                 ),
               ),
@@ -80,9 +80,9 @@ class _TriviaState extends ConsumerState<Trivia> {
                         fixedSize:
                             MaterialStateProperty.all(const Size(200, 40)),
                         backgroundColor:
-                            MaterialStateProperty.all(Colors.white),
+                            MaterialStateProperty.all(AppTheme.white),
                         foregroundColor:
-                            MaterialStateProperty.all(Colors.black),
+                            MaterialStateProperty.all(AppTheme.dark),
                         overlayColor: MaterialStateProperty.all(Colors.grey),
                         shape: MaterialStateProperty.all(
                           RoundedRectangleBorder(
@@ -91,9 +91,18 @@ class _TriviaState extends ConsumerState<Trivia> {
                         ),
                       ),
                       onPressed: () {
-                        ref.read(triviaController.notifier).shuffle();
+                        triviaProvider.trivia.category.id ==
+                                Trivia.end().category.id
+                            ? Navigator.of(context).pop()
+                            : ref.read(triviaController).shuffleNext();
                       },
-                      child: const Text("NEXT")),
+                      child: Text(triviaProvider.trivia.category.id ==
+                              Trivia.start().category.id
+                          ? "START"
+                          : triviaProvider.trivia.category.id ==
+                                  Trivia.end().category.id
+                              ? " CLOSE"
+                              : "NEXT")),
                 ),
               ),
             ),

@@ -1,6 +1,8 @@
 import 'package:dk_date/controllers/trivia.controller.dart';
 import 'package:dk_date/models/trivia.category.model.dart';
+import 'package:dk_date/screens/help.dart';
 import 'package:dk_date/screens/trivia.dart';
+import 'package:dk_date/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -24,7 +26,7 @@ class _CategorySelectState extends ConsumerState<CategorySelect> {
         height: double.infinity,
         width: double.infinity,
         decoration: const BoxDecoration(
-          color: Colors.black,
+          color: AppTheme.dark,
           image: DecorationImage(
               image: AssetImage(
                 "assets/bg/category.png",
@@ -56,7 +58,7 @@ class _CategorySelectState extends ConsumerState<CategorySelect> {
                           .textTheme
                           .headlineSmall!
                           .copyWith(
-                              color: Colors.black,
+                              color: AppTheme.dark,
                               fontWeight: FontWeight.bold,
                               fontSize: 20),
                     ),
@@ -71,7 +73,7 @@ class _CategorySelectState extends ConsumerState<CategorySelect> {
                               margin:
                                   const EdgeInsets.symmetric(vertical: 16.0),
                               decoration: const BoxDecoration(
-                                color: Colors.black12,
+                                color: AppTheme.light,
                                 borderRadius: BorderRadius.all(
                                   Radius.circular(8.0),
                                 ),
@@ -115,42 +117,53 @@ class _CategorySelectState extends ConsumerState<CategorySelect> {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Center(
-                  child: TextButton(
-                      style: ButtonStyle(
-                        fixedSize:
-                            MaterialStateProperty.all(const Size(200, 40)),
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.white),
-                        foregroundColor:
-                            MaterialStateProperty.all(Colors.black),
-                        overlayColor: MaterialStateProperty.all(Colors.grey),
-                        shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                      ),
-                      onPressed: () {
-                        if (pickedCategories.isNotEmpty) {
-                          // Add selected to categories
-                          ref
-                              .read(triviaController)
-                              .addCategories(pickedCategories);
-                          //
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  Trivia(categories: pickedCategories),
+                  child: Column(
+                    children: [
+                      TextButton(
+                          style: ButtonStyle(
+                            fixedSize:
+                                MaterialStateProperty.all(const Size(200, 40)),
+                            backgroundColor:
+                                MaterialStateProperty.all(AppTheme.white),
+                            foregroundColor:
+                                MaterialStateProperty.all(AppTheme.dark),
+                            overlayColor:
+                                MaterialStateProperty.all(Colors.grey),
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
                             ),
-                          );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                              content: Text(
-                                  "Please pick at least 1 category to continue!")));
-                        }
-                      },
-                      child: const Text("CONTINUE")),
+                          ),
+                          onPressed: () {
+                            if (pickedCategories.isNotEmpty) {
+                              // Add selected to categories
+                              ref
+                                  .read(triviaController)
+                                  .addCategories(pickedCategories);
+                              // Go to trivias
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const TriviaScreen(),
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          "Please pick at least 1 category to continue!")));
+                            }
+                          },
+                          child: const Text("CONTINUE")),
+                      TextButton(
+                          onPressed: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => const Help()));
+                          },
+                          child: const Text("Help"))
+                    ],
+                  ),
                 ),
               ),
             ),

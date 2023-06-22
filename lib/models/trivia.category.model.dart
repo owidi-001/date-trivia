@@ -7,10 +7,10 @@ class TriviaCategory {
       {required this.id, required this.name, required this.fileName});
 
   static List<TriviaCategory> defaultCategories = [
-    TriviaCategory(id: 1, name: "Love & Intimacy", fileName: "1.txt"),
-    TriviaCategory(id: 2, name: "Career & Goals", fileName: "2.txt"),
-    TriviaCategory(id: 3, name: "Hobbies & Interests", fileName: "3.txt"),
-    TriviaCategory(id: 4, name: "Values & Beliefs", fileName: "4.txt"),
+    TriviaCategory(id: 1, name: "Love & Intimacy", fileName: "love.txt"),
+    TriviaCategory(id: 2, name: "Career & Goals", fileName: "career.txt"),
+    TriviaCategory(id: 3, name: "Hobbies & Interests", fileName: "hobby.txt"),
+    TriviaCategory(id: 4, name: "Values & Beliefs", fileName: "values.txt"),
   ];
 
   factory TriviaCategory.dummy() {
